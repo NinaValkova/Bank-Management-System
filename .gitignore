@@ -1,0 +1,15 @@
+**/logs/
+**/airflow/logs/
+**/bank_warehouse/logs/
+
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+.env

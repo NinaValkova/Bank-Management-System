@@ -1,0 +1,206 @@
+/* ===== GLOBAL ===== */
+body {
+  background: linear-gradient(135deg, #7a57b5, #7a4fcf);
+  min-height: 100vh;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont;
+}
+
+/* ===== PAGE LAYOUT ===== */
+.page-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+/* ===== AUTH CARD ===== */
+.auth-card {
+  width: 32rem;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(40, 10, 80, 0.35);
+  border: none;
+}
+
+.auth-card h3 {
+  font-weight: 700;
+  color: #5b2d8b;
+}
+
+/* ===== FORMS ===== */
+.form-group label,
+.form-label {
+  font-weight: 600;
+  color: #4a2a78;
+}
+
+.form-control {
+  max-width: 420px;
+  margin: auto;
+  border-radius: 8px;
+  border: 1px solid #d6c8f0;
+  padding: 10px 12px;
+}
+
+.form-control:focus {
+  border-color: #7a4fcf;
+  box-shadow: 0 0 0 0.15rem rgba(122, 79, 207, 0.25);
+}
+
+/* ===== BUTTON ROW ===== */
+.btn-row {
+  gap: 12px;
+}
+
+.btn-row button,
+.btn-row a {
+  min-width: 130px;
+  margin: 6px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+/* Primary button */
+.btn-primary,
+.btn-row button {
+  background: linear-gradient(135deg, #6a3fcf, #8a63e6);
+  border: none;
+}
+
+.btn-primary:hover,
+.btn-row button:hover {
+  background: linear-gradient(135deg, #5a32b8, #7a52d1);
+}
+
+/* Secondary (links) */
+.btn-secondary {
+  background: #ede7fb;
+  color: #5b2d8b;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background: #dfd4f6;
+  color: #4a2372;
+}
+
+/* ===== LINKS ===== */
+a {
+  color: #6a3fcf;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #4f28a3;
+  text-decoration: underline;
+}
+
+/* ===== SMALL TEXT ===== */
+small {
+  color: #6b5a88;
+}
+
+/* ===== MENU GRID (already purple, refined) ===== */
+.menu-grid {
+  width: min(700px, 92%);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.menu-card {
+  padding: 22px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #6a3fcf, #8a63e6);
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.menu-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* ===== BANK LAYOUT ===== */
+.form-control { max-width: 420px; margin: auto; }
+.page-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.btn-row button { min-width: 120px; margin: 6px; }
+.navbar-brand { font-weight: 700; }
+.bank-center-inner { height: 100%; display: flex; align-items: center; justify-content: center; }
+.menu-grid { width: min(700px, 92%); display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.menu-card { padding: 22px 14px; border: 0; border-radius: 10px; background: #6a4aa3; color: #fff; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: transform 0.08s ease; }
+.menu-card:hover { transform: translateY(-2px); } 
+
+/* BANK LAYOUT */
+.bank-shell { min-height: 100vh; background: #f5f5f5; }
+.bank-layout { display: grid; grid-template-columns: 220px 1fr 220px; min-height: 100vh; }
+.bank-side { background: hsl(262, 39%, 53%); padding: 14px; display: flex; flex-direction: column; gap: 10px; } 
+.bank-btn { background: #9274c7; color: #fff; border: none; padding: 12px; border-radius: 6px; font-weight: 600; text-decoration: none; text-align: left; }
+.bank-btn:hover { background: #b59ee5; text-decoration: none;} 
+.bank-btn:disabled { background: #cfcfcf; color: #777; cursor: not-allowed; } 
+.bank-center { background: #ffffff; padding: 24px; }
+
+
+/* Main navbar background */
+.navbar {
+  background-color:  #f5f5f5 !important;
+}
+
+/* Brand */
+.navbar-brand {
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  color: #7a57b5 !important;
+}
+
+/* Navbar buttons */
+.navbar .btn, .logout {
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 4px 12px;
+  transition: all 0.15s ease;
+}
+
+/* Outline buttons (links) */
+.navbar .btn-outline-light, .logout {
+  color: #7a57b5;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: transparent;
+  border-color: rgba(201, 165, 219, 0.9);
+}
+
+.navbar .btn-outline-light:hover {
+  text-decoration: none;
+}
+
+/* Logout button (warning → purple-accented) */
+.navbar .btn-warning {
+  background: linear-gradient(135deg, #ffb347, #ff9800);
+  border: none;
+  color: #3a1f00;
+}
+
+.navbar .btn-warning:hover {
+  background: linear-gradient(135deg, #ffa726, #fb8c00);
+  color: #2a1600;
+}
+
+/* Navbar spacing fix */
+.navbar .ms-auto {
+  align-items: center;
+}
+
+/* Mobile toggler (if used later) */
+.navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.navbar-toggler-icon {
+  filter: brightness(200%);
+}

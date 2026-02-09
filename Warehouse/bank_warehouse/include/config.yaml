@@ -1,0 +1,42 @@
+aws_conn_id: aws_conn_id
+
+s3:
+  bucket: bank-managment-system-bucket
+  folder: ASC_files/
+
+snowflake:
+  conn_id: my_snowflake_conn
+  account: STZQFKV-TS59628
+  database: BANK_DB
+  targets:
+    district:
+      schema: BRONZE_LAYER
+      table: district
+
+    account:
+      schema: BRONZE_LAYER
+      table: account
+
+    client:
+      schema: BRONZE_LAYER
+      table: client
+
+    disp:
+      schema: BRONZE_LAYER
+      table: disp
+
+    card:
+      schema: BRONZE_LAYER
+      table: card
+
+    order:
+      schema: BRONZE_LAYER
+      table: ORDER 
+
+    transaction:
+      schema: BRONZE_LAYER
+      table: transaction
+
+    loan:
+      schema: BRONZE_LAYER
+      table: loan

@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "banking-app"
+version = "0.1.0"
+description = "Bank Management System - OLTP"
+readme = "README.md"
+authors = [
+  { name = "Nina Valkova", email = "nina13valkova@gmail.com" }
+]
+requires-python = ">=3.10.11"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.setuptools]
+packages = ["server"]
+

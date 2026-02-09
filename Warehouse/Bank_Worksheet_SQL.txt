@@ -1,0 +1,1271 @@
+USE ROLE ACCOUNTADMIN;  
+
+CREATE WAREHOUSE BANK_WH;
+USE WAREHOUSE BANK_WH;
+
+CREATE DATABASE IF NOT EXISTS BANK_DB;
+
+USE DATABASE BANK_DB;
+
+CREATE SCHEMA IF NOT EXISTS BANK_DB.BRONZE_LAYER;
+CREATE SCHEMA IF NOT EXISTS BANK_DB.SILVER_LAYER;
+CREATE SCHEMA IF NOT EXISTS BANK_DB.GOLDEN_LAYER;
+
+SHOW GRANTS ON WAREHOUSE BANK_WH;
+CREATE ROLE IF NOT EXISTS POWERBI_ROLE;
+GRANT USAGE, OPERATE ON WAREHOUSE BANK_WH TO ROLE POWERBI_ROLE;
+GRANT USAGE ON DATABASE BANK_DB TO ROLE POWERBI_ROLE;
+GRANT USAGE ON SCHEMA BANK_DB.GOLDEN_LAYER TO ROLE POWERBI_ROLE;
+GRANT SELECT ON ALL TABLES IN SCHEMA BANK_DB.GOLDEN_LAYER TO ROLE POWERBI_ROLE;
+GRANT SELECT ON FUTURE TABLES IN SCHEMA BANK_DB.GOLDEN_LAYER TO ROLE POWERBI_ROLE;
+
+
+CREATE OR REPLACE TABLE BANK_DB.BRONZE_LAYER.DISTRICT (
+    A1   VARCHAR,  
+    A2 VARCHAR,   
+    A3 VARCHAR, 
+    A4  VARCHAR,
+    A5  VARCHAR,
+    A6  VARCHAR,
+    A7  VARCHAR,
+    A8  VARCHAR,
+    A9  VARCHAR,
+    A10 VARCHAR,
+    A11 VARCHAR,
+    A12 VARCHAR,
+    A13 VARCHAR,
+    A14 VARCHAR,
+    A15 VARCHAR,
+    A16 VARCHAR
+);
+SELECT * FROM BANK_DB.BRONZE_LAYER.DISTRICT;
+
+
+CREATE OR REPLACE TABLE BANK_DB.BRONZE_LAYER.ACCOUNT (
+    account_id INTEGER,
+    district_id INTEGER,
+    frequency VARCHAR,
+    date VARCHAR
+);
+SELECT * FROM BANK_DB.BRONZE_LAYER.ACCOUNT;
+
+
+CREATE OR REPLACE TABLE BANK_DB.BRONZE_LAYER.CLIENT (
+    client_id INTEGER,
+    birth_number VARCHAR,
+    district_id VARCHAR
+);
+SELECT * FROM BANK_DB.BRONZE_LAYER.CLIENT;
+
+
+CREATE OR REPLACE TABLE BANK_DB.BRONZE_LAYER.DISP (
+    disp_id INTEGER,
+    client_id INTEGER,
+    account_id INTEGER,
+    type VARCHAR
+);
+SELECT * FROM BANK_DB.BRONZE_LAYER.DISP;
+
+
+CREATE OR REPLACE TABLE BANK_DB.BRONZE_LAYER.CARD (
+    card_id INTEGER,
+    disp_id INTEGER,
+    type VARCHAR,
+    issued VARCHAR
+);
+SELECT * FROM BANK_DB.BRONZE_LAYER.CARD;
+
+CREATE OR REPLACE TABLE BANK_DB.BRONZE_LAYER.LOAN (
+    loan_id INTEGER,
+    account_id INTEGER,
+    date VARCHAR,
+    amount NUMBER(15,2),
+    duration INTEGER,
+    payments NUMBER(15,2),
+    status VARCHAR
+);
+SELECT * FROM BANK_DB.BRONZE_LAYER.LOAN;
+
+
+CREATE OR REPLACE TABLE BANK_DB.BRONZE_LAYER."ORDER" (
+    order_id INTEGER,
+    account_id INTEGER,
+    bank_to VARCHAR,
+    account_to VARCHAR,
+    amount NUMBER(15,2),
+    k_symbol VARCHAR
+);
+SELECT * FROM BANK_DB.BRONZE_LAYER."ORDER";
+
+
+CREATE OR REPLACE TABLE BANK_DB.BRONZE_LAYER.TRANSACTION (
+    trans_id INTEGER,
+    account_id INTEGER,
+    date VARCHAR,
+    type VARCHAR,
+    operation VARCHAR,
+    amount NUMBER(15,2),
+    balance NUMBER(15,2),
+    k_symbol VARCHAR,
+    bank VARCHAR,
+    account VARCHAR
+);
+SELECT * FROM BANK_DB.BRONZE_LAYER.TRANSACTION;
+
+
+CREATE OR REPLACE TABLE BANK_DB.BRONZE_LAYER.DATABASE_ACCOUNTS (
+    id              INTEGER,                
+    account_number  VARCHAR(64),             
+    balance         NUMBER(12,2),            
+    created_at      TIMESTAMP_NTZ            
+);
+SELECT * FROM BANK_DB.BRONZE_LAYER.DATABASE_ACCOUNTS;
+
+
+CREATE OR REPLACE TABLE BANK_DB.BRONZE_LAYER.DATABASE_GUESTS (
+    id           INTEGER,                   
+    first_name   VARCHAR(50),
+    second_name  VARCHAR(50),
+    username     VARCHAR(32),
+    email        VARCHAR(64),
+    password     VARCHAR(255),
+    created_at   TIMESTAMP_NTZ
+);
+SELECT * FROM BANK_DB.BRONZE_LAYER.DATABASE_GUESTS;
+
+
+CREATE OR REPLACE TABLE BANK_DB.BRONZE_LAYER.DATABASE_USERS (
+    id            INTEGER,                
+    birth_number  VARCHAR(20)                
+);
+SELECT * FROM BANK_DB.BRONZE_LAYER.DATABASE_USERS;
+
+
+CREATE OR REPLACE TABLE BANK_DB.BRONZE_LAYER.DATABASE_DISPOSITIONS (
+    id         INTEGER,                      
+    user_id    INTEGER,                      
+    account_id INTEGER,                      
+    type       VARCHAR(20)                  
+);
+SELECT * FROM BANK_DB.BRONZE_LAYER.DATABASE_DISPOSITIONS;
+
+
+CREATE OR REPLACE TABLE BANK_DB.BRONZE_LAYER.DATABASE_TRANSACTIONS (
+    id           INTEGER,                    
+    account_id   INTEGER,                    
+    from_account VARCHAR(18),               
+    to_account   VARCHAR(18),
+    amount       NUMBER(12,2),
+    balance      NUMBER(12,2),
+    currency     VARCHAR(3),                
+    date         TIMESTAMP_NTZ,
+    type         VARCHAR(20),
+    operation    VARCHAR(50)
+);
+SELECT * FROM BANK_DB.BRONZE_LAYER.DATABASE_TRANSACTIONS;
+
+
+CREATE OR REPLACE TABLE BANK_DB.BRONZE_LAYER.DATABASE_DISPOSITIONS (
+    id              INTEGER,
+    user_id         INTEGER,
+    account_id      INTEGER,
+    type            STRING
+);
+SELECT * FROM BANK_DB.BRONZE_LAYER.DATABASE_DISPOSITIONS;
+
+
+CREATE OR REPLACE TABLE BANK_DB.BRONZE_LAYER.DATABASE_TRANSACTIONS (
+    id              INTEGER,
+    account_id      INTEGER,
+    from_account    STRING,
+    to_account      STRING,
+    amount          NUMBER(12,2),
+    balance         NUMBER(12,2),
+    currency        STRING,
+    date            DATETIME,
+    type            STRING,
+    operation       STRING
+);
+SELECT * FROM BANK_DB.BRONZE_LAYER.DATABASE_TRANSACTIONS;
+
+CREATE OR REPLACE TABLE BANK_DB.SILVER_LAYER.DISTRICT (
+    district_id   INTEGER,   
+    district_name VARCHAR,   
+    district_region VARCHAR, 
+    A4  INTEGER,
+    A5  INTEGER,
+    A6  INTEGER,
+    A7  INTEGER,
+    A8  INTEGER,
+    A9  INTEGER,
+    A10 FLOAT,
+    A11 FLOAT,
+    A12 FLOAT,
+    A13 FLOAT,
+    A14 INTEGER,
+    A15 INTEGER,
+    A16 INTEGER,
+    CONSTRAINT pk_district PRIMARY KEY (district_id)
+);
+
+SELECT * FROM BANK_DB.SILVER_LAYER.DISTRICT;
+
+
+INSERT INTO BANK_DB.SILVER_LAYER.DISTRICT (
+    district_id,
+    district_name,
+    district_region,
+    A4, A5, A6, A7, A8, A9,
+    A10, A11, A12, A13,
+    A14, A15, A16
+)
+SELECT
+    A1,
+    A2,
+    A3,
+
+    CASE WHEN REGEXP_LIKE(A4,  '^[0-9]+$') THEN A4  ELSE -1 END,
+    CASE WHEN REGEXP_LIKE(A5,  '^[0-9]+$') THEN A5  ELSE 'n/a' END,
+    CASE WHEN REGEXP_LIKE(A6,  '^[0-9]+$') THEN A6  ELSE 'n/a' END,
+    CASE WHEN REGEXP_LIKE(A7,  '^[0-9]+$') THEN A7  ELSE -1 END,
+    CASE WHEN REGEXP_LIKE(A8,  '^[0-9]+$') THEN A8  ELSE -1 END,
+    CASE WHEN REGEXP_LIKE(A9,  '^[0-9]+$') THEN A9  ELSE -1 END,
+
+    CASE WHEN REGEXP_LIKE(A10, '^[0-9]+(\.[0-9]+)?$') THEN A10 ELSE -1 END,
+    CASE WHEN REGEXP_LIKE(A11, '^[0-9]+(\.[0-9]+)?$') THEN A11 ELSE -1 END,
+    CASE WHEN REGEXP_LIKE(A12, '^[0-9]+(\.[0-9]+)?$') THEN A12 ELSE -1 END,
+    CASE WHEN REGEXP_LIKE(A13, '^[0-9]+(\.[0-9]+)?$') THEN A13 ELSE -1 END,
+
+    CASE WHEN REGEXP_LIKE(A14, '^[0-9]+$') THEN A14 ELSE -1 END,
+    CASE WHEN REGEXP_LIKE(A15, '^[0-9]+$') THEN A15 ELSE -1 END,
+    CASE WHEN REGEXP_LIKE(A16, '^[0-9]+$') THEN A16 ELSE -1 END
+
+FROM BANK_DB.BRONZE_LAYER.DISTRICT;
+
+
+
+CREATE OR REPLACE TABLE BANK_DB.SILVER_LAYER.ACCOUNT (
+    account_id  INTEGER,
+    district_id INTEGER,
+    frequency   VARCHAR,
+    balance FLOAT,
+    date   DATE,
+    CONSTRAINT pk_account PRIMARY KEY (account_id),
+    CONSTRAINT fk_account_district
+        FOREIGN KEY (district_id)
+        REFERENCES BANK_DB.SILVER_LAYER.DISTRICT(district_id)
+);
+
+SELECT * FROM BANK_DB.SILVER_LAYER.ACCOUNT;
+
+INSERT INTO BANK_DB.SILVER_LAYER.ACCOUNT (
+    account_id,
+    district_id,
+    frequency,
+    balance,
+    date
+)
+SELECT
+    a.account_id,
+    a.district_id,
+    a.frequency,
+    da.balance,
+    TRY_TO_DATE(
+        CONCAT(
+            '19',
+            SUBSTR(a.date, 1, 2), '-',
+            SUBSTR(a.date, 3, 2), '-',
+            SUBSTR(a.date, 5, 2)
+        )
+    ) AS date
+
+FROM BANK_DB.BRONZE_LAYER.ACCOUNT a
+LEFT JOIN BANK_DB.BRONZE_LAYER.DATABASE_ACCOUNTS da
+    ON a.account_id = da.id;
+
+
+CREATE OR REPLACE TABLE BANK_DB.SILVER_LAYER.CLIENT (
+    client_id     INTEGER,
+    first_name    VARCHAR,
+    second_name   VARCHAR,
+    email         VARCHAR,
+    birth_number  DATETIME,
+    district_id   INTEGER,
+
+    CONSTRAINT pk_client PRIMARY KEY (client_id),
+    CONSTRAINT fk_client_district
+        FOREIGN KEY (district_id)
+        REFERENCES BANK_DB.SILVER_LAYER.DISTRICT(district_id)
+);
+
+SELECT * FROM BANK_DB.SILVER_LAYER.CLIENT;
+
+INSERT INTO BANK_DB.SILVER_LAYER.CLIENT (
+    client_id,
+    first_name,
+    second_name,
+    email,
+    birth_number,
+    district_id
+)
+SELECT
+    c.client_id,
+    g.first_name,
+    g.second_name,
+    g.email,
+    COALESCE(
+        u.birth_number,
+        TRY_TO_DATE(
+            CASE
+                WHEN LENGTH(c.birth_number) >= 6 THEN
+                    CASE
+                        WHEN SUBSTR(c.birth_number, 3, 2)::INT > 50
+                        THEN CONCAT(
+                            '19',
+                            SUBSTR(c.birth_number, 1, 2),
+                            '-',
+                            LPAD(TO_VARCHAR(SUBSTR(c.birth_number, 3, 2)::INT - 50), 2, '0'),
+                            '-',
+                            SUBSTR(c.birth_number, 5, 2)
+                        )
+                        ELSE CONCAT(
+                            '19',
+                            SUBSTR(c.birth_number, 1, 2),
+                            '-',
+                            SUBSTR(c.birth_number, 3, 2),
+                            '-',
+                            SUBSTR(c.birth_number, 5, 2)
+                        )
+                    END
+            END
+        )
+    ) AS birth_number,
+
+    c.district_id
+
+FROM BANK_DB.BRONZE_LAYER.CLIENT c
+
+LEFT JOIN BANK_DB.BRONZE_LAYER.DATABASE_USERS u
+    ON c.client_id = u.id
+
+LEFT JOIN BANK_DB.BRONZE_LAYER.DATABASE_GUESTS g
+    ON c.client_id = g.id;
+
+
+CREATE OR REPLACE TABLE BANK_DB.SILVER_LAYER.DISP (
+    disp_id    INTEGER,
+    client_id  INTEGER,
+    account_id INTEGER,
+    type       VARCHAR,             
+    CONSTRAINT pk_disp PRIMARY KEY (disp_id),
+    CONSTRAINT fk_disp_client
+        FOREIGN KEY (client_id)
+        REFERENCES BANK_DB.SILVER_LAYER.CLIENT(client_id),
+    CONSTRAINT fk_disp_account
+        FOREIGN KEY (account_id)
+        REFERENCES BANK_DB.SILVER_LAYER.ACCOUNT (account_id)
+);
+
+SELECT * FROM BANK_DB.SILVER_LAYER.DISP;
+
+INSERT INTO BANK_DB.SILVER_LAYER.DISP (
+    disp_id,
+    client_id,
+    account_id,
+    type
+)
+SELECT
+    disp_id,
+    client_id,
+    account_id,
+    type
+FROM BANK_DB.BRONZE_LAYER.DISP;
+
+
+CREATE OR REPLACE TABLE BANK_DB.SILVER_LAYER.CARD (
+    card_id INTEGER,
+    disp_id INTEGER,
+    type    VARCHAR,
+    issued  TIMESTAMP_NTZ,
+    CONSTRAINT pk_card PRIMARY KEY (card_id),
+    CONSTRAINT fk_card_disp
+        FOREIGN KEY (disp_id)
+        REFERENCES BANK_DB.SILVER_LAYER.DISP(disp_id)
+);
+
+SELECT * FROM BANK_DB.SILVER_LAYER.CARD;
+
+INSERT INTO BANK_DB.SILVER_LAYER.CARD (
+    card_id,
+    disp_id,
+    type,
+    issued
+)
+SELECT
+    card_id,
+    disp_id,
+    type,
+    TRY_TO_DATE(issued)
+FROM BANK_DB.BRONZE_LAYER.CARD;
+
+
+CREATE OR REPLACE TABLE BANK_DB.SILVER_LAYER."ORDER" (
+    order_id   INTEGER,
+    account_id INTEGER,
+    bank_to    VARCHAR,
+    account_to VARCHAR,
+    amount     NUMBER(15,2),
+    k_symbol   VARCHAR,
+    CONSTRAINT pk_order PRIMARY KEY (order_id),
+    CONSTRAINT fk_order_account
+        FOREIGN KEY (account_id)
+        REFERENCES BANK_DB.SILVER_LAYER.ACCOUNT(account_id)
+);
+
+SELECT * FROM BANK_DB.SILVER_LAYER."ORDER";
+
+INSERT INTO BANK_DB.SILVER_LAYER."ORDER" (
+    order_id,
+    account_id,
+    bank_to,
+    account_to,
+    amount,
+    k_symbol
+)
+SELECT
+    order_id,
+    account_id,
+    bank_to,
+    account_to,
+    amount,
+    k_symbol
+FROM BANK_DB.BRONZE_LAYER."ORDER";
+
+
+CREATE OR REPLACE TABLE BANK_DB.SILVER_LAYER.TRANSACTION (
+    trans_id    INTEGER,
+    account_id  INTEGER,
+    date  DATE,
+    type        VARCHAR,
+    operation   VARCHAR,
+    amount      NUMBER(15,2),
+    balance     NUMBER(15,2),
+    k_symbol    VARCHAR,
+    bank        VARCHAR,
+    account  VARCHAR,
+    CONSTRAINT pk_trans PRIMARY KEY (trans_id),
+    CONSTRAINT fk_trans_account
+        FOREIGN KEY (account_id)
+        REFERENCES BANK_DB.SILVER_LAYER.ACCOUNT(account_id)
+);
+
+SELECT * FROM BANK_DB.SILVER_LAYER.TRANSACTION;
+
+INSERT INTO BANK_DB.SILVER_LAYER.TRANSACTION (
+  trans_id, account_id, "DATE", type, operation, amount, balance, k_symbol, bank, account
+)
+SELECT
+  trans_id,
+  account_id,
+  TRY_TO_DATE(
+    NULLIF(LPAD(TRIM(SPLIT_PART(TO_VARCHAR("DATE"), '.', 1)), 6, '0'), ''),
+    'YYMMDD'
+  ) AS "DATE",
+
+  CASE UPPER(TRIM(type))
+    WHEN 'PRIJEM' THEN 'CREDIT'
+    WHEN 'VYDAJ'  THEN 'DEBIT'
+    WHEN 'VYBER'  THEN 'DEBIT'
+    ELSE NULLIF(UPPER(TRIM(type)), '')
+  END AS type,
+
+  CASE
+    WHEN operation IS NULL OR TRIM(operation) = '' THEN NULL
+    WHEN UPPER(TRIM(operation)) = 'VKLAD'            THEN 'CASH_DEPOSIT'
+    WHEN UPPER(TRIM(operation)) = 'VYBER'            THEN 'CASH_WITHDRAW'
+    WHEN UPPER(TRIM(operation)) = 'VYBER KARTOU'     THEN 'CASH_WITHDRAW'
+    WHEN UPPER(TRIM(operation)) = 'PLATBA KARTOU'    THEN 'CARD_PAYMENT'
+    WHEN UPPER(TRIM(operation)) = 'PREVOD Z UCTU'    THEN 'TRANSFER_IN'
+    WHEN UPPER(TRIM(operation)) = 'PREVOD NA UCET'   THEN 'TRANSFER_OUT'
+    ELSE UPPER(TRIM(operation))  
+  END AS operation,
+
+  amount,
+  balance,
+  NULLIF(TRIM(k_symbol), '') AS k_symbol,
+  NULLIF(TRIM(bank), '')     AS bank,
+  NULLIF(TRIM(account), '')  AS account   
+FROM BANK_DB.BRONZE_LAYER.TRANSACTION;
+
+
+INSERT INTO BANK_DB.SILVER_LAYER.TRANSACTION (
+  trans_id, account_id, "DATE", type, operation, amount, balance, k_symbol, bank, account
+)
+SELECT
+  id                                     AS trans_id,
+  account_id,
+  CAST("DATE" AS DATE)                   AS "DATE",
+  NULLIF(TRIM(type), '')                 AS type,
+  NULLIF(TRIM(operation), '')            AS operation,
+  amount,
+  balance,
+  NULL                                   AS k_symbol,
+  NULL                                   AS bank,
+  NULLIF(TRIM(to_account), '')           AS account
+FROM BANK_DB.BRONZE_LAYER.DATABASE_TRANSACTIONS;
+
+
+
+CREATE OR REPLACE TABLE BANK_DB.SILVER_LAYER.LOAN (
+    loan_id    INTEGER,
+    account_id INTEGER,
+    date DATE,
+    amount     NUMBER(15,2),
+    duration   INTEGER,
+    payments   NUMBER(15,2),
+    status     VARCHAR,
+    CONSTRAINT pk_loan PRIMARY KEY (loan_id),
+    CONSTRAINT fk_loan_account
+        FOREIGN KEY (account_id)
+        REFERENCES BANK_DB.SILVER_LAYER.ACCOUNT(account_id)
+);
+
+
+SELECT * FROM BANK_DB.SILVER_LAYER.LOAN;
+
+
+INSERT INTO BANK_DB.SILVER_LAYER.LOAN (
+  loan_id,
+  account_id,
+  "DATE",
+  amount,
+  duration,
+  payments,
+  status
+)
+SELECT
+  loan_id,
+  account_id,
+  TRY_TO_DATE(NULLIF(TRIM("DATE"), ''), 'YYMMDD') AS "DATE",
+  amount,
+  duration,
+  payments,
+  NULLIF(TRIM(status), '') AS status
+FROM BANK_DB.BRONZE_LAYER.LOAN;
+    
+CREATE OR REPLACE TABLE BANK_DB.GOLDEN_LAYER.DateDim (
+    PK_Date   DATE        PRIMARY KEY,
+    Day       NUMBER(2),
+    Month     NUMBER(2),
+    Quarter   NUMBER(1),
+    Year      NUMBER(4)
+);
+
+CREATE OR REPLACE TABLE BANK_DB.GOLDEN_LAYER.DistrictDim (
+    SK_district   INTEGER        AUTOINCREMENT,
+    district_id   INTEGER        NOT NULL,              
+    district_name VARCHAR,
+    district_region VARCHAR,
+    A4            INTEGER,
+    A5            INTEGER,
+    A6            INTEGER,
+    A7            INTEGER,
+    A8            INTEGER,
+    A9            INTEGER,
+    A10           FLOAT,
+    A11           FLOAT,
+    A12           FLOAT,
+    A13           FLOAT,
+    A14           INTEGER,
+    A15           INTEGER,
+    A16           INTEGER,
+    StartDate     DATE           NOT NULL,
+    EndDate       DATE,
+    isCurrent     BOOLEAN        DEFAULT TRUE,
+    CONSTRAINT PK_DistrictDim PRIMARY KEY (SK_district)
+);
+
+CREATE OR REPLACE TABLE BANK_DB.GOLDEN_LAYER.AccountDim (
+    SK_account   INTEGER   AUTOINCREMENT,
+    account_id   INTEGER   NOT NULL,        
+    frequency    VARCHAR,
+    date         DATE,
+    StartDate    DATE      NOT NULL,
+    EndDate      DATE,
+    isCurrent    BOOLEAN   DEFAULT TRUE,
+    CONSTRAINT PK_AccountDim PRIMARY KEY (SK_account)
+);
+
+CREATE OR REPLACE TABLE BANK_DB.GOLDEN_LAYER.CustomerDim (
+    SK_customer   INTEGER   AUTOINCREMENT,
+    customer_id   INTEGER   NOT NULL,  
+    first_name    VARCHAR,
+    second_name   VARCHAR,
+    email         VARCHAR,
+    birth_date    VARCHAR,
+    FK_district   INTEGER,             
+    FK_account    INTEGER,              
+    type          VARCHAR,
+    StartDate     DATE      NOT NULL,
+    EndDate       DATE,
+    isCurrent     BOOLEAN   DEFAULT TRUE,
+    CONSTRAINT PK_CustomerDim PRIMARY KEY (SK_customer),
+    CONSTRAINT FK_CustomerDim_District
+        FOREIGN KEY (FK_district) REFERENCES BANK_DB.GOLDEN_LAYER.DistrictDim (SK_district),
+    CONSTRAINT FK_CustomerDim_Account
+        FOREIGN KEY (FK_account)  REFERENCES BANK_DB.GOLDEN_LAYER.AccountDim (SK_account)
+);
+
+CREATE OR REPLACE TABLE BANK_DB.GOLDEN_LAYER.Bridge_AccountCustomer (
+    SK_account   INTEGER NOT NULL,
+    SK_customer  INTEGER NOT NULL,
+
+    CONSTRAINT PK_Bridge_AccountCustomer 
+        PRIMARY KEY (SK_account, SK_customer),
+
+    CONSTRAINT FK_Bridge_AccountCustomer_Account
+        FOREIGN KEY (SK_account)
+        REFERENCES BANK_DB.GOLDEN_LAYER.AccountDim (SK_account),
+
+    CONSTRAINT FK_Bridge_AccountCustomer_Customer
+        FOREIGN KEY (SK_customer)
+        REFERENCES BANK_DB.GOLDEN_LAYER.CustomerDim (SK_customer)
+);
+
+CREATE OR REPLACE TABLE BANK_DB.GOLDEN_LAYER.FactBalance (
+    SK_Balance    INTEGER AUTOINCREMENT,
+    FK_account    INTEGER NOT NULL,
+    balance       NUMBER(15,2),
+
+    CONSTRAINT PK_FactBalance PRIMARY KEY (SK_Balance),
+    CONSTRAINT FK_FactBalance_Account
+        FOREIGN KEY (FK_account) REFERENCES BANK_DB.GOLDEN_LAYER.AccountDim (SK_account)
+);
+
+
+CREATE OR REPLACE TABLE BANK_DB.GOLDEN_LAYER.CardDim (
+    SK_card      INTEGER   AUTOINCREMENT,
+    card_id      INTEGER   NOT NULL,    
+    FK_account   INTEGER   NOT NULL,    
+    card_type    VARCHAR,
+    issued_date  DATE,
+    StartDate    DATE      NOT NULL,
+    EndDate      DATE,
+    isCurrent    BOOLEAN   DEFAULT TRUE,
+    CONSTRAINT PK_CardDim PRIMARY KEY (SK_card),
+    CONSTRAINT FK_CardDim_Account
+        FOREIGN KEY (FK_account) REFERENCES BANK_DB.GOLDEN_LAYER.AccountDim (SK_account)
+);
+
+CREATE OR REPLACE TABLE BANK_DB.GOLDEN_LAYER.KSymbolDim (
+    SK_k_symbol    INTEGER   AUTOINCREMENT,
+    k_symbol_code  VARCHAR   NOT NULL,   
+    description    VARCHAR,
+    StartDate      DATE      NOT NULL,
+    EndDate        DATE,
+    isCurrent      BOOLEAN   DEFAULT TRUE,
+    CONSTRAINT PK_KSymbolDim PRIMARY KEY (SK_k_symbol)
+);
+
+CREATE OR REPLACE TABLE BANK_DB.GOLDEN_LAYER.BankDim (
+    SK_bank     INTEGER   AUTOINCREMENT,
+    bank_code   VARCHAR   NOT NULL, 
+    bank_name   VARCHAR,
+    StartDate   DATE      NOT NULL,
+    EndDate     DATE,
+    isCurrent   BOOLEAN   DEFAULT TRUE,
+    CONSTRAINT PK_BankDim PRIMARY KEY (SK_bank)
+);
+
+
+CREATE OR REPLACE TABLE BANK_DB.GOLDEN_LAYER.OperationDim (
+    SK_operation    INTEGER   AUTOINCREMENT,
+    operation_code  VARCHAR   NOT NULL,  
+    description     VARCHAR,
+    StartDate       DATE      NOT NULL,
+    EndDate         DATE,
+    isCurrent       BOOLEAN   DEFAULT TRUE,
+    CONSTRAINT PK_OperationDim PRIMARY KEY (SK_operation)
+);
+
+CREATE OR REPLACE TABLE BANK_DB.GOLDEN_LAYER.TransTypeDim (
+    SK_trans_type    INTEGER   AUTOINCREMENT,
+    trans_type_code  VARCHAR   NOT NULL,   
+    description      VARCHAR,
+    StartDate        DATE      NOT NULL,
+    EndDate          DATE,
+    isCurrent        BOOLEAN   DEFAULT TRUE,
+    CONSTRAINT PK_TransTypeDim PRIMARY KEY (SK_trans_type)
+);
+
+CREATE OR REPLACE TABLE BANK_DB.GOLDEN_LAYER.LoanStatusDim (
+    SK_loan_status  INTEGER   AUTOINCREMENT,
+    status_code     VARCHAR   NOT NULL,  
+    StartDate       DATE      NOT NULL,
+    EndDate         DATE,
+    isCurrent       BOOLEAN   DEFAULT TRUE,
+    CONSTRAINT PK_LoanStatusDim PRIMARY KEY (SK_loan_status)
+);
+
+CREATE OR REPLACE TABLE BANK_DB.GOLDEN_LAYER.TransactionFact (
+    SK_transaction  INTEGER   AUTOINCREMENT,
+    FK_account      INTEGER   NOT NULL, 
+    FK_date         DATE      NOT NULL, 
+    FK_trans_type   INTEGER,           
+    FK_k_symbol     INTEGER,           
+    FK_operation    INTEGER,           
+    FK_bank         INTEGER,  
+    FK_card         INTEGER,
+    amount          NUMBER(15,2),
+    balance         NUMBER(15,2),
+    account         VARCHAR,
+    CONSTRAINT PK_TransactionFact PRIMARY KEY (SK_transaction),
+    CONSTRAINT FK_TransFact_Account
+        FOREIGN KEY (FK_account)    REFERENCES BANK_DB.GOLDEN_LAYER.AccountDim (SK_account),
+    CONSTRAINT FK_TransFact_Date
+        FOREIGN KEY (FK_date)       REFERENCES BANK_DB.GOLDEN_LAYER.DateDim (PK_Date),
+    CONSTRAINT FK_TransFact_TransType
+        FOREIGN KEY (FK_trans_type) REFERENCES BANK_DB.GOLDEN_LAYER.TransTypeDim (SK_trans_type),
+    CONSTRAINT FK_TransFact_KSymbol
+        FOREIGN KEY (FK_k_symbol)   REFERENCES BANK_DB.GOLDEN_LAYER.KSymbolDim (SK_k_symbol),
+    CONSTRAINT FK_TransFact_Operation
+        FOREIGN KEY (FK_operation)  REFERENCES BANK_DB.GOLDEN_LAYER.OperationDim (SK_operation),
+    CONSTRAINT FK_TransFact_Bank
+        FOREIGN KEY (FK_bank)       REFERENCES BANK_DB.GOLDEN_LAYER.BankDim (SK_bank)
+);
+
+CREATE OR REPLACE TABLE BANK_DB.GOLDEN_LAYER.LoanFact (
+    SK_loan        INTEGER   AUTOINCREMENT,
+    FK_account     INTEGER   NOT NULL, 
+    FK_date        DATE      NOT NULL,
+    FK_loan_status INTEGER   NOT NULL, 
+    amount         NUMBER(15,2),
+    duration       INTEGER,
+    payments       NUMBER(15,2),
+    CONSTRAINT PK_LoanFact PRIMARY KEY (SK_loan),
+    CONSTRAINT FK_LoanFact_Account
+        FOREIGN KEY (FK_account)     REFERENCES BANK_DB.GOLDEN_LAYER.AccountDim (SK_account),
+    CONSTRAINT FK_LoanFact_Date
+        FOREIGN KEY (FK_date)        REFERENCES BANK_DB.GOLDEN_LAYER.DateDim (PK_Date),
+    CONSTRAINT FK_LoanFact_Status
+        FOREIGN KEY (FK_loan_status) REFERENCES BANK_DB.GOLDEN_LAYER.LoanStatusDim (SK_loan_status)
+);
+
+CREATE OR REPLACE TABLE BANK_DB.GOLDEN_LAYER.OrderFact (
+    SK_order    INTEGER   AUTOINCREMENT,
+    FK_account  INTEGER   NOT NULL, 
+    FK_bank     INTEGER,           
+    FK_k_symbol INTEGER,           
+    account_to  VARCHAR,
+    amount      NUMBER(15,2),
+    CONSTRAINT PK_OrderFact PRIMARY KEY (SK_order),
+    CONSTRAINT FK_OrderFact_Account
+        FOREIGN KEY (FK_account)  REFERENCES BANK_DB.GOLDEN_LAYER.AccountDim (SK_account),
+    CONSTRAINT FK_OrderFact_Bank
+        FOREIGN KEY (FK_bank)     REFERENCES BANK_DB.GOLDEN_LAYER.BankDim (SK_bank),
+    CONSTRAINT FK_OrderFact_KSymbol
+        FOREIGN KEY (FK_k_symbol) REFERENCES BANK_DB.GOLDEN_LAYER.KSymbolDim (SK_k_symbol)
+);
+
+
+INSERT INTO BANK_DB.GOLDEN_LAYER.DistrictDim (
+      district_id
+    , district_name
+    , district_region
+    , A4
+    , A5
+    , A6
+    , A7
+    , A8
+    , A9
+    , A10
+    , A11
+    , A12
+    , A13
+    , A14
+    , A15
+    , A16
+    , StartDate
+    , EndDate
+    , isCurrent
+)
+SELECT
+      d.district_id
+    , d.district_name
+    , d.district_region
+    , d.A4
+    , d.A5
+    , d.A6
+    , d.A7
+    , d.A8
+    , d.A9
+    , d.A10
+    , d.A11
+    , d.A12
+    , d.A13
+    , d.A14
+    , d.A15
+    , d.A16
+    , CURRENT_DATE()        AS StartDate
+    , DATE '2500-12-31'     AS EndDate
+    , TRUE                  AS isCurrent
+FROM BANK_DB.SILVER_LAYER.DISTRICT d;
+
+SELECT * FROM BANK_DB.GOLDEN_LAYER.DistrictDim;
+
+
+SET START_DATE = TO_DATE('1990-01-01');
+SET END_DATE   = TO_DATE('2500-12-31');
+
+
+INSERT INTO BANK_DB.GOLDEN_LAYER.DateDim (PK_Date, Day, Month, Quarter, Year)
+SELECT
+    d::DATE                                      AS PK_Date,
+    EXTRACT(DAY     FROM d)                      AS Day,
+    EXTRACT(MONTH   FROM d)                      AS Month,
+    EXTRACT(QUARTER FROM d)                      AS Quarter,
+    EXTRACT(YEAR    FROM d)                      AS Year
+FROM (
+    SELECT DATEADD(
+               'day',
+               SEQ4(),                          
+               $START_DATE
+           ) AS d
+    FROM TABLE(GENERATOR(ROWCOUNT => 5000000))   
+)
+WHERE d <= $END_DATE
+ORDER BY d;
+
+
+SELECT * FROM BANK_DB.GOLDEN_LAYER.DateDim;
+
+
+
+INSERT INTO BANK_DB.GOLDEN_LAYER.AccountDim (
+    account_id,
+    frequency,
+    "DATE",
+    StartDate,
+    EndDate,
+    isCurrent
+)
+SELECT
+    account_id,
+    frequency,
+    "DATE"                      AS "DATE",
+    CURRENT_DATE()              AS StartDate,
+    DATE '2500-12-31'           AS EndDate,
+    TRUE                        AS isCurrent
+FROM BANK_DB.SILVER_LAYER.ACCOUNT;
+
+
+INSERT INTO BANK_DB.GOLDEN_LAYER.AccountDim (
+    account_id,
+    frequency,
+    "DATE",
+    StartDate,
+    EndDate,
+    isCurrent
+)
+SELECT
+    account_id,
+    frequency,
+    "DATE"                      AS "DATE",
+    CURRENT_DATE()              AS StartDate,
+    DATE '2500-12-31'           AS EndDate,
+    TRUE                        AS isCurrent
+FROM BANK_DB.SILVER_LAYER.ACCOUNT;
+
+
+SELECT * FROM BANK_DB.GOLDEN_LAYER.AccountDim;
+
+INSERT INTO BANK_DB.GOLDEN_LAYER.CustomerDim (
+    customer_id,
+    first_name,
+    second_name,
+    email,
+    birth_date,
+    FK_district,
+    FK_account,
+    type,
+    StartDate,
+    EndDate,
+    isCurrent
+)
+SELECT
+    c.client_id AS customer_id,
+    c.first_name AS first_name,
+    c.second_name AS second_name,
+    c.email AS email,
+    c.birth_number AS birth_date,  
+
+    d.SK_district AS FK_district,
+
+    a.SK_account AS FK_account,
+
+    disp.type,
+
+    CURRENT_DATE() AS StartDate,
+    DATE '2500-12-31'AS EndDate,
+    TRUE           AS isCurrent
+
+FROM BANK_DB.SILVER_LAYER.CLIENT c
+
+LEFT JOIN BANK_DB.SILVER_LAYER.DISP disp
+       ON c.client_id = disp.client_id
+
+LEFT JOIN BANK_DB.GOLDEN_LAYER.DistrictDim d
+       ON c.district_id = d.district_id
+
+LEFT JOIN BANK_DB.GOLDEN_LAYER.AccountDim a
+       ON disp.account_id = a.account_id;
+
+SELECT * FROM BANK_DB.GOLDEN_LAYER.CustomerDim;
+
+
+INSERT INTO BANK_DB.GOLDEN_LAYER.CardDim (
+    card_id,
+    FK_account,
+    card_type,
+    issued_date,
+    StartDate,
+    EndDate,
+    isCurrent
+)
+SELECT
+    c.card_id,
+    a.SK_account AS FK_account,
+    c.type AS card_type,
+    CAST(c.issued AS DATE) AS issued_date,
+    CURRENT_DATE() AS StartDate,
+    DATE '2500-12-31' AS EndDate,
+    TRUE AS isCurrent
+
+FROM BANK_DB.SILVER_LAYER.CARD c
+
+LEFT JOIN BANK_DB.SILVER_LAYER.DISP d
+       ON c.disp_id = d.disp_id
+
+LEFT JOIN BANK_DB.GOLDEN_LAYER.AccountDim a
+       ON d.account_id = a.account_id;
+
+SELECT * FROM BANK_DB.GOLDEN_LAYER.CardDim;       
+
+
+
+INSERT INTO BANK_DB.GOLDEN_LAYER.KSymbolDim (
+    k_symbol_code,
+    description,
+    StartDate,
+    EndDate,
+    isCurrent
+)
+SELECT DISTINCT
+    t.k_symbol,
+    CASE t.k_symbol
+        WHEN 'POJISTNE'      THEN 'Insurance payment'
+        WHEN 'SLUZBY'        THEN 'Payment for services'
+        WHEN 'UROK'          THEN 'Interest'
+        WHEN 'SANKCNI UROK'  THEN 'Penalty interest'
+        WHEN 'POPLATEK'      THEN 'Fee'
+        WHEN 'VYDAJ'         THEN 'Outgoing payment'
+        WHEN 'VYBER'         THEN 'Cash withdrawal'
+        WHEN 'PREVOD'        THEN 'Bank transfer'
+        WHEN 'SIPO'          THEN 'Household bill payment'
+        WHEN 'LEASING'       THEN 'Leasing payment'
+        WHEN 'UVER'          THEN 'Loan repayment'
+        WHEN 'DUCHOD'        THEN 'Pension payment'
+        ELSE 'Unknown'
+    END AS description,
+    CURRENT_DATE(),
+    DATE '2500-12-31',
+    TRUE
+FROM BANK_DB.SILVER_LAYER.TRANSACTION t
+WHERE t.k_symbol IS NOT NULL
+  AND t.k_symbol <> ''
+  AND NOT EXISTS (
+        SELECT 1
+        FROM BANK_DB.GOLDEN_LAYER.KSymbolDim d
+        WHERE d.k_symbol_code = t.k_symbol
+    );
+
+SELECT * FROM BANK_DB.GOLDEN_LAYER.KSymbolDim;
+
+INSERT INTO BANK_DB.GOLDEN_LAYER.BankDim (
+    bank_code,
+    bank_name,
+    StartDate,
+    EndDate,
+    isCurrent
+)
+SELECT DISTINCT
+    t.bank AS bank_code,
+    CASE 
+        WHEN t.bank = 'YZ' THEN 'Bank identifier YZ'
+        WHEN t.bank = 'IJ' THEN 'Bank identifier IJ'
+        WHEN t.bank = 'ST' THEN 'Bank identifier ST'
+        WHEN t.bank = 'UV' THEN 'Bank identifier UV'
+        WHEN t.bank = 'MN' THEN 'Bank identifier MN'
+        WHEN t.bank = 'AB' THEN 'Bank identifier AB'
+        WHEN t.bank = 'CD' THEN 'Bank identifier CD'
+        WHEN t.bank = 'EF' THEN 'Bank identifier EF'
+        WHEN t.bank = 'GH' THEN 'Bank identifier GH'
+        WHEN t.bank = 'WX' THEN 'Bank identifier WX'
+        WHEN t.bank = 'KL' THEN 'Bank identifier KL'
+        WHEN t.bank = 'OP' THEN 'Bank identifier OP'
+        WHEN t.bank = 'QR' THEN 'Bank identifier QR'
+        ELSE 'Unknown bank identifier'
+    END AS bank_name,
+    CURRENT_DATE(),
+    DATE '2500-12-31',
+    TRUE
+FROM BANK_DB.SILVER_LAYER.TRANSACTION t
+WHERE t.bank IS NOT NULL
+  AND t.bank <> ''
+  AND NOT EXISTS (
+        SELECT 1
+        FROM BANK_DB.GOLDEN_LAYER.BankDim d
+        WHERE d.bank_code = t.bank
+    );
+
+
+SELECT * FROM BANK_DB.GOLDEN_LAYER.BankDim;
+
+INSERT INTO BANK_DB.GOLDEN_LAYER.OperationDim (
+    operation_code,
+    description,
+    StartDate,
+    EndDate,
+    isCurrent
+)
+SELECT DISTINCT
+    t.operation AS operation_code,
+    CASE 
+        WHEN t.operation = 'CASH_DEPOSIT' THEN 'Cash deposit'
+        WHEN t.operation = 'CASH_WITHDRAW' THEN 'Cash withdrawal'
+        WHEN t.operation = 'TRANSFER_IN' THEN 'Incoming bank transfer'
+        WHEN t.operation = 'TRANSFER_OUT' THEN 'Outgoing bank transfer'
+        WHEN t.operation IS NULL OR TRIM(t.operation) = '' THEN 'No operation / automatic posting'
+        ELSE 'Unknown operation type'
+    END AS description,
+    CURRENT_DATE(),
+    DATE '2500-12-31',
+    TRUE
+FROM BANK_DB.SILVER_LAYER.TRANSACTION t
+WHERE t.operation IS NOT NULL
+  AND NOT EXISTS (
+        SELECT 1
+        FROM BANK_DB.GOLDEN_LAYER.OperationDim d
+        WHERE d.operation_code = t.operation
+    );
+    
+SELECT * FROM BANK_DB.GOLDEN_LAYER.OperationDim;    
+
+
+
+INSERT INTO BANK_DB.GOLDEN_LAYER.TransTypeDim (
+    trans_type_code,
+    description,
+    StartDate,
+    EndDate,
+    isCurrent
+)
+SELECT DISTINCT
+    t.type,
+    CASE 
+        WHEN t.type = 'CREDIT' THEN 'Incoming transaction (credit)'
+        WHEN t.type = 'DEBIT'  THEN 'Outgoing transaction (debit)'
+        WHEN t.type = 'VYBER'  THEN 'Cash withdrawal'
+        ELSE 'Unknown transaction type'
+    END,
+    CURRENT_DATE(),
+    DATE '2500-12-31',
+    TRUE
+FROM BANK_DB.SILVER_LAYER.TRANSACTION t
+WHERE t.type IS NOT NULL
+  AND t.type <> ''
+  AND NOT EXISTS (
+        SELECT 1 
+        FROM BANK_DB.GOLDEN_LAYER.TransTypeDim d
+        WHERE d.trans_type_code = t.type
+    );
+
+SELECT * FROM BANK_DB.GOLDEN_LAYER.TransTypeDim;
+
+INSERT INTO BANK_DB.GOLDEN_LAYER.LoanStatusDim (
+    status_code,
+    StartDate,
+    EndDate,
+    isCurrent
+)
+SELECT DISTINCT
+    t.status AS status_code,
+    CURRENT_DATE() AS StartDate,
+    DATE '2500-12-31' AS EndDate,
+    TRUE AS isCurrent
+FROM BANK_DB.SILVER_LAYER.LOAN t
+WHERE t.status IS NOT NULL
+  AND t.status <> ''
+  AND NOT EXISTS (
+        SELECT 1
+        FROM BANK_DB.GOLDEN_LAYER.LoanStatusDim d
+        WHERE d.status_code = t.status
+    );
+
+ SELECT * FROM BANK_DB.GOLDEN_LAYER.LoanStatusDim; 
+
+
+TRUNCATE TABLE BANK_DB.GOLDEN_LAYER.TransactionFact;
+
+INSERT INTO BANK_DB.GOLDEN_LAYER.TransactionFact (
+    FK_account,
+    FK_date,
+    FK_trans_type,
+    FK_k_symbol,
+    FK_operation,
+    FK_bank,
+    FK_card,
+    amount,
+    balance,
+    account
+)
+SELECT
+    ad.SK_account                       AS FK_account,
+    d.PK_Date                           AS FK_date,
+    tt.SK_trans_type                    AS FK_trans_type,
+    ks.SK_k_symbol                      AS FK_k_symbol,
+    op.SK_operation                     AS FK_operation,
+    b.SK_bank                           AS FK_bank,
+
+    cd.SK_card                          AS FK_card,
+
+    t.amount,
+    t.balance,
+    t.account
+FROM BANK_DB.SILVER_LAYER.TRANSACTION t
+
+JOIN BANK_DB.GOLDEN_LAYER.AccountDim ad
+  ON t.account_id = ad.account_id
+ AND ad.isCurrent = TRUE
+
+JOIN BANK_DB.GOLDEN_LAYER.DateDim d
+  ON t."DATE" = d.PK_Date
+
+LEFT JOIN BANK_DB.GOLDEN_LAYER.TransTypeDim tt
+  ON t.type = tt.trans_type_code
+ AND tt.isCurrent = TRUE
+
+LEFT JOIN BANK_DB.GOLDEN_LAYER.KSymbolDim ks
+  ON t.k_symbol = ks.k_symbol_code
+ AND ks.isCurrent = TRUE
+
+LEFT JOIN BANK_DB.GOLDEN_LAYER.OperationDim op
+  ON t.operation = op.operation_code
+ AND op.isCurrent = TRUE
+
+LEFT JOIN BANK_DB.GOLDEN_LAYER.BankDim b
+  ON t.bank = b.bank_code
+ AND b.isCurrent = TRUE
+
+LEFT JOIN BANK_DB.GOLDEN_LAYER.CardDim cd
+  ON cd.FK_account = ad.SK_account
+ AND cd.isCurrent = TRUE
+
+QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY t.trans_id
+    ORDER BY cd.issued_date DESC, cd.SK_card DESC
+) = 1;
+
+
+
+SELECT * FROM BANK_DB.GOLDEN_LAYER.TransactionFact;      
+
+INSERT INTO BANK_DB.GOLDEN_LAYER.LoanFact (
+    FK_account,
+    FK_date,
+    FK_loan_status,
+    amount,
+    duration,
+    payments
+)
+SELECT
+    ad.SK_account              AS FK_account,
+    d.PK_Date                  AS FK_date,
+    ls.SK_loan_status          AS FK_loan_status,
+    l.amount,
+    l.duration,
+    l.payments
+FROM BANK_DB.SILVER_LAYER.LOAN l
+JOIN BANK_DB.GOLDEN_LAYER.AccountDim ad
+      ON l.account_id = ad.account_id
+     AND ad.isCurrent = TRUE
+JOIN BANK_DB.GOLDEN_LAYER.DateDim d
+      ON l."DATE" = d.PK_Date
+JOIN BANK_DB.GOLDEN_LAYER.LoanStatusDim ls
+      ON l.status = ls.status_code
+     AND ls.isCurrent = TRUE;
+
+
+ 
+SELECT * FROM BANK_DB.GOLDEN_LAYER.LoanFact;
+
+INSERT INTO BANK_DB.GOLDEN_LAYER.OrderFact (
+    FK_account,
+    FK_bank,
+    FK_k_symbol,
+    account_to,
+    amount
+)
+SELECT
+    ad.SK_account          AS FK_account,
+    b.SK_bank              AS FK_bank,
+    ks.SK_k_symbol         AS FK_k_symbol,
+    o.account_to,
+    o.amount
+FROM BANK_DB.SILVER_LAYER."ORDER" o
+
+JOIN BANK_DB.GOLDEN_LAYER.AccountDim ad
+      ON o.account_id = ad.account_id
+     AND ad.isCurrent = TRUE
+
+LEFT JOIN BANK_DB.GOLDEN_LAYER.BankDim b
+       ON o.bank_to = b.bank_code
+      AND b.isCurrent = TRUE
+
+LEFT JOIN BANK_DB.GOLDEN_LAYER.KSymbolDim ks
+       ON o.k_symbol = ks.k_symbol_code
+      AND ks.isCurrent = TRUE;
+
+SELECT * FROM BANK_DB.GOLDEN_LAYER.OrderFact;  
+
+INSERT INTO BANK_DB.GOLDEN_LAYER.FactBalance (FK_account, balance)
+SELECT
+  ad.SK_account,
+  da.balance
+FROM BANK_DB.BRONZE_LAYER.DATABASE_ACCOUNTS da
+JOIN BANK_DB.GOLDEN_LAYER.AccountDim ad
+  ON da.id = ad.account_id
+WHERE ad.isCurrent = TRUE
+  AND da.balance IS NOT NULL;
+
+SELECT * FROM BANK_DB.GOLDEN_LAYER.FactBalance;  
+
+
+INSERT INTO BANK_DB.GOLDEN_LAYER.Bridge_AccountCustomer (
+    SK_account,
+    SK_customer
+)
+SELECT DISTINCT
+    ad.SK_account,
+    cd.SK_customer
+FROM BANK_DB.SILVER_LAYER.DISP disp
+JOIN BANK_DB.GOLDEN_LAYER.AccountDim ad
+  ON disp.account_id = ad.account_id
+ AND ad.isCurrent = TRUE
+JOIN BANK_DB.GOLDEN_LAYER.CustomerDim cd
+  ON disp.client_id = cd.customer_id
+ AND cd.isCurrent = TRUE;
+
+SELECT * FROM BANK_DB.GOLDEN_LAYER.Bridge_AccountCustomer;
+  
+
