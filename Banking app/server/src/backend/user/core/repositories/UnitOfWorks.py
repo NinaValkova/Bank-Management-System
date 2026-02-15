@@ -25,7 +25,7 @@ class UnitOfWork(IUnitOfWorks):
         if exc_type:
             self.session.rollback()
         else:
-            self.session.commit()
+            self.commit()
 
         self.session.close()
 

@@ -8,23 +8,25 @@ export default function AppNavbar() {
   const navigate = useNavigate();
 
   const logout = async () => {
-    // Only admin has /logout endpoint in your backend
-    if (auth.isAdmin) {
-      try {
+    try {
+      if (auth.isAdmin) {
         await http.post("/api/admin/logout");
-      } catch {
-        // ignore
+      } else {
+        await http.post("/api/user/logout");
       }
+    } catch {
+      // ignore
     }
+
     auth.clearToken();
     navigate("/user/login");
   };
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-      <div className="navbar-brand" to="/">
+      <Link className="navbar-brand" to="/">
         Banking App
-      </div>
+      </Link>
 
       <div className="ms-auto d-flex gap-2">
         {!auth.isLoggedIn && (
@@ -38,20 +40,10 @@ export default function AppNavbar() {
           </>
         )}
 
-        {auth.isLoggedIn && !auth.isAdmin && (
-          <>
-            <button class= "logout" onClick={logout}>
-              Logout
-            </button>
-          </>
-        )}
-
-        {auth.isLoggedIn && auth.isAdmin && (
-          <>
-            <button className="btn btn-outline-light btn-sm" onClick={logout}>
-              Logout
-            </button>
-          </>
+        {auth.isLoggedIn && (
+          <button className="btn btn-outline-light btn-sm" onClick={logout}>
+            Logout
+          </button>
         )}
       </div>
     </nav>

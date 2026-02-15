@@ -3,6 +3,7 @@ from ..interfaces.IGenericRepository import IGenericRepository
 
 T = TypeVar("T")
 
+
 class GenericRepository(IGenericRepository[T], Generic[T]):
 
     def __init__(self, session, model) -> None:
@@ -10,7 +11,7 @@ class GenericRepository(IGenericRepository[T], Generic[T]):
         self.model = model
         self.seen = set()
 
-    def get_by_id(self, id):
+    def get_by_id(self, id) -> Optional[T]:
         entity = self.session.get(self.model, id)
 
         if entity:
@@ -19,7 +20,7 @@ class GenericRepository(IGenericRepository[T], Generic[T]):
         return entity
 
     def list_all(self) -> list[T]:
-        return self.session.query(self.model).all() 
+        return self.session.query(self.model).all()
 
     def add(self, entity) -> None:
         self.seen.add(entity)

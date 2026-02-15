@@ -5,6 +5,18 @@ from ...models.disposition import Disposition
 from ...models.transaction import Transaction
 
 
+def get_free_account():
+    return Account.query.outerjoin(Disposition).filter(Disposition.id == None).first()
+
+def get_balance_value(user_id: int) -> Optional[Decimal]:
+    disposition = Disposition.query.filter_by(user_id=user_id).first()
+
+    if not disposition:
+        return None
+
+    return disposition.account.balance
+
+
 def get_user_account(user_id):
     return (
         Account.query.join(Disposition).filter(Disposition.user_id == user_id).first()
@@ -34,12 +46,3 @@ def get_overview(user):
         },
         "transactions": transactions,
     }
-
-
-def get_balance_value(user_id: int) -> Optional[Decimal]:
-    disposition = Disposition.query.filter_by(user_id=user_id).first()
-
-    if not disposition:
-        return None
-
-    return disposition.account.balance

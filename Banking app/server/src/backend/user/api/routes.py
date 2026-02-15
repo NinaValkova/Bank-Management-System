@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask_restful import Api
-from .resources import UserRegister, UserLogin, FetchUser, FetchBalance, ManageUser
+from .resources import UserRegister, UserLogin, FetchUser, FetchBalance, ManageUser, UserLogout
 from .resources import SendMoney, CashDeposit, CashWithdraw, UserTransactions
 from .resources import HelpSupport
 
@@ -17,3 +17,4 @@ api.add_resource(CashDeposit, "/cash-deposit")
 api.add_resource(CashWithdraw, "/cash-withdraw")
 api.add_resource(UserTransactions, "/transactions")
 api.add_resource(HelpSupport, "/help-support")
+api.add_resource(UserLogout, "/logout")

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+
+from .IAccountRepository import IAccountRepository
 from .ITransactionRepository import ITransactionRepository
 from .IAuthenticationRepository import IAuthenticationRepository
 
@@ -8,6 +10,7 @@ from .IAuthenticationRepository import IAuthenticationRepository
 class IUnitOfWorks(ABC):
     authentication: IAuthenticationRepository
     transaction: ITransactionRepository
+    account: IAccountRepository
 
     @abstractmethod
     def __enter__(self) -> IUnitOfWorks:

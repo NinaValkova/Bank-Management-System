@@ -8,7 +8,7 @@ from .... import db
 
 class SendMoney(Resource):
     @jwt_required()
-    def post(self) -> tuple[dict[str, Any], int] | TransactionService:
+    def post(self) -> tuple[dict[str, Any], int]:
         data = request.get_json()
 
         user_id = int(get_jwt_identity())

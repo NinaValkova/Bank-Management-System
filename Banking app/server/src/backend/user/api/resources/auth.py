@@ -1,7 +1,7 @@
 from flask_restful import Resource
 from flask import request
 from ...services import UserAuthService
-from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required, get_jwt
 from .... import db
 
 
@@ -40,11 +40,18 @@ class FetchBalance(Resource):
 class ManageUser(Resource):
     @jwt_required()
     def put(self, **kwargs):
-        json_data = request.get_json()
-        if not json_data:
+        data = request.get_json()
+        if not data:
             return {"statuse": 2, "message": "Invalid request"}, 400
 
         user = UserAuthService()
         user_id = int(get_jwt_identity())
-        response = user.update_user(db.session, user_id, json_data)
+        response = user.update_user(db.session, user_id, data)
         return response
+
+
+class UserLogout(Resource):
+    @jwt_required()
+    def post(self):
+        jti = get_jwt()["jti"]
+        return UserAuthService.logout(jti)

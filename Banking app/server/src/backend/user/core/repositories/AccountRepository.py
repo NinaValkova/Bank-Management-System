@@ -1,9 +1,11 @@
 from typing import Optional
+
+from ..interfaces import IAccountRepository
 from ....models.account import Account
 from .GenericRepository import GenericRepository
 
 
-class AccountRepository(GenericRepository[Account]):
+class AccountRepository(GenericRepository[Account], IAccountRepository):
 
     def __init__(self, session) -> None:
         super().__init__(session, Account)

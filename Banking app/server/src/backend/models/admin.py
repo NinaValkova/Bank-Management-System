@@ -1,6 +1,6 @@
 from .guest import Guest
 from .. import db
-from sqlalchemy import  func
+from sqlalchemy import func
 
 
 class Admin(Guest):

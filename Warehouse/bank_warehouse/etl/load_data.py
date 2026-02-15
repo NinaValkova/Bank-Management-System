@@ -18,7 +18,7 @@ def load_data_to_snowflake(
         name=table,
         con=engine,
         schema=schema,
-        if_exists="replace",
+        if_exists="append",
         index=False,
         method="multi",
     )

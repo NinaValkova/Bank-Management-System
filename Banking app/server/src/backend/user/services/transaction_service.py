@@ -22,6 +22,9 @@ class TransactionService:
             sender = uow.account.get_by_id(sender_account.id)
             receiver = uow.account.get_by_number(to_account_number)
 
+            if not sender:
+                return {"message": "Sender acco unt not found"}, 404
+
             if not receiver:
                 return {"message": "Receiver not found"}, 404
 
@@ -57,15 +60,17 @@ class TransactionService:
             )
 
             uow.transaction.add(tx)
-            uow.commit()
 
-            return {"message": "Transfer successful"}, 200
+        return {"message": "Transfer successful"}, 200
 
     @staticmethod
     def cash_withdraw(session_factory, account, amount) -> tuple[dict[str, Any], int]:
         with UnitOfWork(session_factory) as uow:
             acc = uow.account.get_by_id(account.id)
             amount = Decimal(amount)
+
+            if not acc:
+                return {"message": "Sender account not found"}, 404
 
             if amount <= 0:
                 return {"message": "Invalid amount"}, 400
@@ -96,18 +101,20 @@ class TransactionService:
             )
 
             uow.transaction.add(tx)
-            uow.commit()
 
-            return {
-                "message": "Cash withdrawn successfully",
-                "balance": str(balance),
-            }, 200
+        return {
+            "message": "Cash withdrawn successfully",
+            "balance": str(balance),
+        }, 200
 
     @staticmethod
     def cash_deposit(session_factory, account, amount) -> tuple[dict[str, Any], int]:
         with UnitOfWork(session_factory) as uow:
             acc = uow.account.get_by_id(account.id)
             amount = Decimal(amount)
+
+            if not acc:
+                return {"message": "Sender account not found"}, 404
 
             if amount <= 0:
                 return {"message": "Invalid amount"}, 400
@@ -135,44 +142,37 @@ class TransactionService:
             )
 
             uow.transaction.add(tx)
-            uow.commit()
 
-            return {
-                "message": "Cash deposited successfully",
-                "balance": str(balance),
-            }, 200
+        return {
+            "message": "Cash deposited successfully",
+            "balance": str(balance),
+        }, 200
 
     @staticmethod
     def list_user_transactions(
         user_id: int, operation=None, sort: str = "desc"
     ) -> tuple[list[dict[str, Any]], int] | tuple[dict[str, Any], int]:
-        try:
-            account = get_user_account(user_id)
-            if not account:
-                return {"message": "Account not found"}, 404
 
-            spec = TransactionSpecification(
-                account_id=account.id, operation=operation, sort=sort
-            )
-            txs = spec.apply(Transaction.query).all()
+        account = get_user_account(user_id)
+        if not account:
+            return {"message": "Account not found"}, 404
 
-            return [
-                {
-                    "id": t.id,
-                    "from_account": t.from_account,
-                    "to_account": t.to_account,
-                    "amount": float(t.amount),
-                    "balance": float(t.balance) if t.balance is not None else None,
-                    "currency": t.currency,
-                    "type": t.type,
-                    "operation": t.operation,
-                    "date": t.date.isoformat() if t.date else None,
-                }
-                for t in txs
-            ], 200
+        spec = TransactionSpecification(
+            account_id=account.id, operation=operation, sort=sort
+        )
+        txs = spec.apply(Transaction.query).all()
 
-        except Exception as e:
-            import traceback
-
-            traceback.print_exc()
-            return {"error": str(e)}, 500
+        return [
+            {
+                "id": t.id,
+                "from_account": t.from_account,
+                "to_account": t.to_account,
+                "amount": float(t.amount),
+                "balance": float(t.balance) if t.balance is not None else None,
+                "currency": t.currency,
+                "type": t.type,
+                "operation": t.operation,
+                "date": t.date.isoformat() if t.date else None,
+            }
+            for t in txs
+        ], 200

@@ -6,12 +6,10 @@ from ...models.disposition import Disposition
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required
 from datetime import timedelta
-from ..helpers import get_balance_value
+from ..helpers import get_balance_value, get_free_account
 from ..core.repositories.UnitOfWorks import UnitOfWork
-
-
-def get_free_account():
-    return Account.query.outerjoin(Disposition).filter(Disposition.id == None).first()
+from ...models.token_blocklist import TokenBlocklist
+from datetime import timedelta, timezone, datetime
 
 
 class UserAuthService:
@@ -45,7 +43,6 @@ class UserAuthService:
             )
 
             uow.authentication.add(disposition)
-            uow.commit()
 
             return {
                 "message": "User registered",
@@ -114,10 +111,9 @@ class UserAuthService:
                 if key in allowed_fields:
                     setattr(user, key, value)
 
-            try:
-                uow.commit()
-                return {"message": "User updated successfully"}, 200
-            except Exception as e:
-                uow.rollback()
-                print(e)
-                return {"message": "Update failed"}, 500
+
+    @staticmethod
+    def logout(jti):
+        db.session.add(TokenBlocklist(jti=jti, created_at=datetime.now(timezone.utc)))
+        db.session.commit()
+        return {"message": "Logged out"}, 200
