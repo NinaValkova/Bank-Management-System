@@ -38,7 +38,6 @@ def seed_from_json(json_path: str) -> None:
 
             db.session.add(account)
 
-        db.session.commit()
 
 
 if __name__ == "__main__":
