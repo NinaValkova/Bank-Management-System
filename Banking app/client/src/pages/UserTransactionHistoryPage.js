@@ -6,7 +6,7 @@ export default function UserTransactionHistoryPage() {
   const [txs, setTxs] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // NEW: sort order state
+  
   const [sortOrder, setSortOrder] = useState("desc"); // "desc" = newest first
   // Optional: operation filter if you want to use it too
   // const [operation, setOperation] = useState("");
@@ -43,7 +43,6 @@ export default function UserTransactionHistoryPage() {
         <div className="d-flex align-items-center justify-content-between mb-3">
           <h4 className="mb-0">Transaction History</h4>
 
-          {/* NEW: sort UI */}
           <Form.Select
             style={{ width: 220 }}
             size="sm"
