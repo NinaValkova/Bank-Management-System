@@ -74,7 +74,7 @@ class UserAuthService:
 
     @staticmethod
     def get_user_info(user_id: int):
-        user = User.query.get_by_id(user_id)
+        user = uow.users..get_by_id(user_id)
 
         if not user:
             return {"message": "User not found"}, 404
@@ -95,7 +95,7 @@ class UserAuthService:
     @staticmethod
     def update_user(session_factory, user_id, data):
         with UnitOfWork(session_factory) as uow:
-            user = User.query.get_by_id(user_id)
+            user = uow.users.get_by_id(user_id)
 
             if not user:
                 return {"message": "User not found"}, 404
