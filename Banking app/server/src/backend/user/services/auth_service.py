@@ -74,8 +74,8 @@ class UserAuthService:
 
     @staticmethod
     def get_user_info(user_id: int):
-        user = uow.users.get_by_id(user_id)
-
+        user = User.query.get(user_id)
+        
         if not user:
             return {"message": "User not found"}, 404
 
